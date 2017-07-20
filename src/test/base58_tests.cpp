@@ -8,6 +8,7 @@
 #include "data/base58_keys_invalid.json.h"
 #include "data/base58_keys_valid.json.h"
 
+#include "wallet/stealth.h"
 #include "key.h"
 #include "script/script.h"
 #include "uint256.h"
@@ -95,6 +96,10 @@ public:
     bool operator()(const CNoDestination &no) const
     {
         return (exp_addrType == "none");
+    }
+    bool operator()(const CStealthAddress &id) const
+    {
+        return (exp_addrType == "stealthaddress");
     }
 };
 
