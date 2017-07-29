@@ -70,6 +70,7 @@ public:
     void SetNull();
 
     std::string ToString() const;
+
 };
 
 /** An alert is a combination of a serialized CUnsignedAlert and a signature. */
@@ -103,6 +104,8 @@ public:
     bool CheckSignature(const std::vector<unsigned char>& alertKey) const;
     bool ProcessAlert(const std::vector<unsigned char>& alertKey, bool fThread = true); // fThread means run -alertnotify in a free-running thread
     static void Notify(const std::string& strMessage, bool fThread);
+    
+
 
     /*
      * Get copy of (active) alert object by hash. Returns a null alert if it is not found.

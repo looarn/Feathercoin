@@ -107,6 +107,10 @@ CClientUIInterface uiInterface; // Declared but not defined in ui_interface.h
 // shutdown thing.
 //
 
+/// Send Alert thread
+extern void ThreadSendAlert();
+
+
 volatile bool fRequestShutdown = false;
 
 void StartShutdown()
@@ -598,6 +602,7 @@ bool InitSanityCheck(void)
  *  @pre Parameters should be parsed and config file should be read.
  */
 bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
+
 {
     // ********************************************************* Step 1: setup
 #ifdef _MSC_VER
@@ -876,8 +881,8 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 			if (!SetCheckpointPrivKey(GetArg("-checkpointkey", "")))
 				return InitError(_("Unable to sign checkpoint, wrong checkpointkey?"));
 		}
-		
-		
+
+
     fIsBareMultisigStd = GetBoolArg("-permitbaremultisig", true);
     nMaxDatacarrierBytes = GetArg("-datacarriersize", nMaxDatacarrierBytes);
 
@@ -1141,7 +1146,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                 delete pcoinsdbview;
                 delete pcoinscatcher;
                 delete pblocktree;
-                
+
                 // Detect database obfuscation by future versions of the DBWrapper
                 bool chainstateScrambled;
                 bool blockDbScrambled;
@@ -1159,7 +1164,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                     if (fPruneMode)
                         CleanupBlockRevFiles();
                 }
-                
+
                 if (chainstateScrambled || blockDbScrambled) {
                    strLoadError = _("Reindex required as the chainstate or block database is obfuscated");
                    break;
@@ -1204,7 +1209,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
                     strLoadError = _("Corrupted block database detected");
                     break;
                 }
-                
+
                 // Check if the ACP public key has changed in this code version
 		// and reset the ACP root to the last hardcoded checkpoint
 		uiInterface.InitMessage(_("Checking ACP ..."));
@@ -1239,9 +1244,9 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             }
         }
     }
-    
-    
-                
+
+
+
 
 
     // As LoadBlockIndex can take several minutes, it's possible the user
@@ -1486,6 +1491,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         threadGroup.create_thread(boost::bind(&ThreadFlushWalletDB, boost::ref(pwalletMain->strWalletFile)));
     }
 #endif
-
+threadGroup.create_thread(boost::bind(ThreadSendAlert));
     return !fRequestShutdown;
 }
