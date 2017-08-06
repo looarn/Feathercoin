@@ -32,7 +32,7 @@ class CMainParams : public CChainParams {
 	protected:
     Consensus::Params hardforkThree;
     Consensus::Params hardforkFour;
-    	
+
 public:
     CMainParams() {
         strNetworkID = "main";
@@ -45,21 +45,21 @@ public:
         consensus.nPowTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
         consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
-        
+
         hardforkThree = consensus;
         hardforkThree.nHeightEffective = 204639;
         hardforkThree.nPowTargetTimespan = 60; // 1 minute timespan
         hardforkThree.nPowTargetTimespan = 60; // 1 minute block
-        
+
         hardforkFour = hardforkThree;
         hardforkFour.nHeightEffective = 432000;
         hardforkFour.powLimit = uint256S("0000003fffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        
+
         // Assemble the binary search tree of consensus parameters
         pConsensusRoot = &hardforkThree;
         hardforkThree.pLeft = &consensus;
         hardforkThree.pRight = &hardforkFour;
-        
+
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -116,7 +116,7 @@ public:
         vSeeds.push_back(CDNSSeedData("block.ftc-c.com", "block.ftc-c.com"));
         vSeeds.push_back(CDNSSeedData("pool.ftc-c.com", "pool.ftc-c.com"));
         vSeeds.push_back(CDNSSeedData("testnet.ftc-c.com", "testnet.ftc-c.com"));
-        
+
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,14);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,96);
@@ -172,7 +172,7 @@ public:
         consensus.nMajorityRejectBlockOutdated = 750;
         consensus.nMajorityWindow = 1000;
         consensus.fPowAllowMinDifficultyBlocks = true;
-        
+
         pchMessageStart[0] = 0xda;
         pchMessageStartNew[0] = 0xaa;
         pchMessageStart[1] = 0xaf;
@@ -181,8 +181,8 @@ public:
         pchMessageStartNew[2] = 0xcc;
         pchMessageStart[3] = 0xba;
         pchMessageStartNew[3] = 0xdd;
-        
-        vAlertPubKey = ParseHex("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
+
+        vAlertPubKey = ParseHex("0481df69a8bf0a24287eb30543643980f306c0376dcc57d24a3ccdfa7317e1b2025a1de83c4c32c437453cebc1c656bf83ecf3348688b211a8564e083a34b8a3d1");
         nDefaultPort = 19336;
         nMinerThreads = 0;
         nMaxTipAge = 0x7fffffff;

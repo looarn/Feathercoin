@@ -70,8 +70,8 @@ void ThreadSendAlert()
     // 60002 : 0.7.*
     // 70001 : 0.8.*
     // 70002 : 0.9.*
-    alert.nMinVer       = 70002;
-    alert.nMaxVer       = 70002;
+    alert.nMinVer       = 70005;
+    alert.nMaxVer       = 110207;
 
     //
     // main.cpp:
@@ -79,17 +79,20 @@ void ThreadSendAlert()
     //  2000 for longer invalid proof-of-work chain
     //  Higher numbers mean higher priority
     alert.nPriority     = 5000;
-    alert.strComment    = "";
-    alert.strStatusBar  = "URGENT: Upgrade required: see https://www.bitcoin.org/heartbleed";
+    alert.strComment    = "TEST123";
+    alert.strStatusBar  = "URGENT: TEST ALERT";
 
     // Set specific client version/versions here. If setSubVer is empty, no filtering on subver is done:
     // alert.setSubVer.insert(std::string("/Satoshi:0.7.2/"));
 
     // Sign
 
-  const char* pszPrivKey = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-  std::vector<unsigned char> vchTmp(ParseHex(pszPrivKey));
-  CPrivKey vchPrivKey(vchTmp.begin(), vchTmp.end());
+#include "alertkeys.h"
+
+   const CChainParams& chainparams = Params();
+  std::vector<unsigned char> vchTmp(ParseHex(pszTestNetPrivKey));
+
+    CPrivKey vchPrivKey(vchTmp.begin(), vchTmp.end() );
 
     CDataStream sMsg(SER_NETWORK, CLIENT_VERSION);
     sMsg << *(CUnsignedAlert*)&alert;
@@ -111,16 +114,17 @@ void ThreadSendAlert()
     sBuffer << alert;
     CAlert alert2;
     sBuffer >> alert2;
-//    if (!alert2.CheckSignature())
-//    {
-//        printf("ThreadSendAlert() : CheckSignature failed\n");
-//        return;
-//    }
+    if (!alert2.CheckSignature(chainparams.AlertKey()))
+    {
+        printf("ThreadSendAlert() : CheckSignature failed\n");
+        return;
+    }
     assert(alert2.vchMsg == alert.vchMsg);
     assert(alert2.vchSig == alert.vchSig);
     alert.SetNull();
     printf("\nThreadSendAlert:\n");
     printf("hash=%s\n", alert2.GetHash().ToString().c_str());
+    printf("%s\n", alert2.ToString().c_str());
     //alert2.print();
     printf("vchMsg=%s\n", HexStr(alert2.vchMsg).c_str());
     printf("vchSig=%s\n", HexStr(alert2.vchSig).c_str());
